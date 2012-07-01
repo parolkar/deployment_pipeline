@@ -1,0 +1,17 @@
+require 'logger'
+require 'rubygems'
+require 'thor'
+require 'pg'
+require 'date'
+require 'chronic'
+require 'active_support/all'
+require "benchmark"
+require 'net/smtp'
+require 'progressbar'
+require 'rdiscount'
+require 'hpricot'
+require 'net/http'
+require 'uri'
+
+require File.dirname(__FILE__) + '/code_repository'
+require File.dirname(__FILE__) + '/tracker'

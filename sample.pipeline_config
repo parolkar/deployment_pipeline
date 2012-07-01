@@ -1,0 +1,14 @@
+# This is a config for Deployment Pipeline Project
+
+PIVOTAL_TRACKER_TOKEN = "your_cryptic_pivotal_token"
+PIVOTAL_TRACKER_PROJECT_IDS = ["proj_id1","proj_id2"]
+
+#ActiveRecord::Base.establish_connection(
+#  :adapter => "postgres",
+#  :host => "localhost",
+#  :database => "appdb",
+#  :username => "appuser",
+#  :password => "secret"
+#)
+
+# STORY_TAG_PATTERN=/\[\w*\s*\#(\d*)\]/   #This regexp will extract ids of stories from commit

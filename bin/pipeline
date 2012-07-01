@@ -1,0 +1,202 @@
+#! /usr/bin/env ruby
+
+require File.dirname(__FILE__) + '/../lib/pipeline'
+
+class PipelineCmd < Thor
+  class_option :config, :type => :string,
+               :desc => "A ruby file that defines relevant constants & configs. accepts ENV $PIPELINE_CONFIG",
+               :default => ENV["PIPELINE_CONFIG"] || "#{ENV['HOME']}/.pipeline_config"
+  def initialize(args=[], options={}, config={})
+    super
+    load(self.options[:config])
+  end
+
+  desc "setup", "Setup Deployment Pipeline Tool"
+  method_option :force, :type => :boolean, :default => false, :desc => "Force operation"
+  def setup
+    #stub
+    puts "Setup complete!"
+  end
+
+
+  desc "status", "lists all stories with their status"
+  method_option :repository_path, :default => "#{Dir.pwd}", :desc => "Git repository path"
+  method_option :branch, :default => "master", :desc => "Git branch to consider"
+  method_option :commit_range, :type => :string, :desc => "Range of commits, eg.\"last_release_tag1..HEAD\""
+  method_option :html, :type => :boolean, :default => false, :desc => "pretty html output"
+  def status
+
+    c_range = options[:commit_range]
+    c_range = c_range.split("..")
+
+    md_msg = ""
+
+    code_repo = CodeRepository.new(options[:repository_path],c_range[0],c_range[1])
+    tracker = PivotalTracker.new
+
+    stories,untagged_commits = tracker.extract_story_ids(code_repo.commits.reverse)
+
+
+    tracker.load_stories(stories.keys,true)
+
+    stories_by_status = {}
+    tracker.stories.each {|story|
+      stories_by_status[story[:status]]   ||= []
+      stories_by_status[story[:status]] << " * (#{story[:type]}) [#{story[:name]}](#{story[:url]})  requested by **#{story[:requested_by]}** owned by #{code_repo.contributors(stories[story[:id]]).join(', ')} "
+    }
+
+    stories_by_status.each_pair do |status,stories|
+      md_msg << "\n#{status}: \n\n"
+      stories.each {|s| md_msg << " #{s} \n"}
+
+    end
+
+
+
+    if untagged_commits.length > 0
+      md_msg << "\n Following commits have not been tagged, (**why lah?**) \n\n"
+      untagged_commits.each do |c|
+         md_msg << "  * #{c.oid}  #{c.message.gsub("\n"," ")[0...140]} by **#{c.author[:name]}** \n"
+      end
+    end
+
+    puts "STATUS:"
+    puts md_msg
+    if options[:html] == true
+      markdown = RDiscount.new(md_msg)
+      temp_html_file = "/tmp/tmp_msg_#{Time.now.to_i}.html"
+      File.open(temp_html_file, 'w') {|f| f.write(markdown.to_html) }
+      system("open #{temp_html_file}")
+    end
+  end
+
+  desc "suitable_release", "Suggests a release commit to be picked and also includes a release plan"
+  method_option :repository_path, :default => "#{Dir.pwd}", :desc => "Git repository path"
+  method_option :branch, :default => "master", :desc => "Git branch to consider"
+  method_option :last_release_commit, :type => :string, :desc => "Commit id (SHA) of previous release "
+  def suitable_release
+    last_release_commit = options[:last_release_commit]
+    code_repo = CodeRepository.new(options[:repository_path],last_release_commit)
+    tracker = PivotalTracker.new
+
+    suitable_release_sha = last_release_commit
+
+    code_repo.commits.reverse.each do |commit|
+      puts "Analysing... #{commit.oid}"
+      #Check if all stories associated to this commit has been accepted, if yes consider the commit , else break
+      #Consider the commit if its untagged anyway
+      commit_suitable = true
+      story_ids,untagged =  tracker.extract_story_ids([commit])  #this will return story_ids and untagged such that they are mutually exclusive.
+      story_ids.keys.each { |story_id|
+        story = tracker.story_obj(story_id)
+        if story.nil? || story[:status] != "accepted"
+          puts "Unknown story :#{story_id} " if story.nil?
+          puts "Unsuitable commit because story status is #{story[:status]}"
+          commit_suitable = false
+          break
+        end
+
+        suitable_release_sha = commit.oid
+        puts "Stories accepted for #{commit.oid}, hence considered"
+      }
+      unless untagged.empty?
+        puts "Commit is untagged hence considered"
+        suitable_release_sha = untagged.first.oid
+      end
+
+      break unless commit_suitable
+    end
+
+
+    if suitable_release_sha ==  last_release_commit
+      puts "No suitable commit to pick for release"
+    else
+      puts "Commit that can be pickup up for release is: #{suitable_release_sha}"
+    end
+  end
+
+
+  desc "release_plan", "Prepares a release plan"
+  method_option :repository_path, :default => "#{Dir.pwd}", :desc => "Git repository path"
+  method_option :branch, :default => "master", :desc => "Git branch to consider"
+  method_option :last_release_commit, :type => :string, :desc => "Commit id (SHA) of previous release "
+  method_option :target_release_commit, :type => :string, :desc => "Commit id (SHA) of intended release "
+  method_option :html, :type => :boolean, :default => false, :desc =>  "pretty html output"
+  def release_plan
+    last_release_commit = options[:last_release_commit]
+    target_release_commit = options[:target_release_commit]
+    code_repo = CodeRepository.new(options[:repository_path],last_release_commit)
+    tracker = PivotalTracker.new
+    stories,untagged_commits = tracker.extract_story_ids(code_repo.commits.reverse)
+
+    commits_ready = []
+    stories_included = []
+
+    all_commits = code_repo.commits.reverse
+    commits_ready << all_commits.shift
+    while all_commits.length > 0 && commits_ready.last.oid != target_release_commit
+      commits_ready << all_commits.shift
+    end
+
+    commits_ready.shift #can ignore first commit, its the last release commit
+    stories_ready = []
+    commits_to_cherry_pick = []
+    sha_list =commits_ready.map(&:oid)
+    sha_list.each  {|c|
+      s = stories.select {|k,v| v.include?(c)}
+      s.each_pair{|k,v|
+        other_commits = v - [c]
+        other_commits.each {|oc|
+          if !sha_list.include?(oc)
+            commits_to_cherry_pick << oc
+          end
+        }
+      }
+      stories_ready += s.keys
+    }
+    stories_ready.uniq!
+    tracker.load_stories(stories_ready,true)
+
+    #cherry-picks have to be arranged in order which appears in repository
+    ordered_cherry_picks = []
+    all_commits.each {|c|
+      ordered_cherry_picks << c.oid if commits_to_cherry_pick.include?(c.oid)
+    }
+
+
+    md_msg = ""
+
+    md_msg << "Release can be locked at commit #{sha_list.last} \n\n"
+
+    md_msg << "Stories being released are:\n\n"
+    tracker.stories.each {|story|
+      md_msg << " * (#{story[:type]}) [#{story[:name]}](#{story[:url]})  requested by **#{story[:requested_by]}** owned by #{code_repo.contributors(stories[story[:id]]).join(', ')} "
+      md_msg << "(current status:<font color='red'>#{story[:status]}</font>)" if  story[:status] != 'accepted'
+      md_msg << " \n"
+    }
+
+
+    md_msg << "\n\nCommits that needs to be cherry-picked as they are part of above stories \n\n"
+    ordered_cherry_picks.reverse.each {|c|
+      c = code_repo.lookup(c)
+      md_msg << " * #{c.oid}  #{c.message.gsub("\n"," ")[0...140]} by #{c.author[:name]} \n"
+    }
+
+    puts md_msg
+
+    if options[:html] == true
+      markdown = RDiscount.new(md_msg)
+      temp_html_file = "/tmp/tmp_msg_#{Time.now.to_i}.html"
+      File.open(temp_html_file, 'w') {|f| f.write(markdown.to_html) }
+      system("open #{temp_html_file}")
+    end
+
+
+  end
+
+end
+
+
+
+
+PipelineCmd.start
