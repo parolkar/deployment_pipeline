@@ -111,6 +111,7 @@ Fetching...:   100% |============================================| Time:   0:00:
 STATUS:
 </code></pre>
 <quote>
+>OUTPUT:
 > finished:
 >
   * (bug) [Users unable to reset their password](http://www.pivotaltracker.com/story/show/1)  requested by **Rajnikanth** owned by Tom Cruise
@@ -137,6 +138,7 @@ Fetching...:   100% |============================================| Time:   0:00:
 
 </code></pre>
 <quote>
+>OUTPUT:
 > Release can be locked at commit 9471d8794a28cc3a6888fa3a42c03edb4f4458a6
 
 > Stories being released are:
