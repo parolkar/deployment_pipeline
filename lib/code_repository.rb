@@ -19,7 +19,8 @@ class CodeRepository
 
     return [] if commit_list.empty?
     author_names = []
-    @commits.each do |c|
+    commit_list.each do |oid|
+      c = @repo.lookup(oid)
       next unless @commits.map(&:oid).include?(c.oid)
       author = c.author
       names = author[:name]
