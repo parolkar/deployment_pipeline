@@ -154,6 +154,18 @@ Fetching...:   100% |============================================| Time:   0:00:
 </quote>
 
 
+####Installation:
+<pre><code>
+  developers-machine:~/workspace/repository (master)$ <b>gem install deployment_pipeline</b>
+  developers-machine:~/workspace/repository (master)$ <b>pipeline setup</b>
+  Let's setup Deployment Pipeline
+  Pivotal Tracker Token:  <i>2d2b1f708d2b1f708cd2b1f708c</i>
+  Pivotal Tracker Project Ids (comma separated):  <i>1234,5678,9876</i>
+  Setup complete! (Configuration updated in <b>~/.pipeline_config</b>)
+  Thanks for choosing Deployment Pipeline
+
+</code></pre>
+
 
 <sub>\[**1**\]: Team which is motivated for [release-often philosophy](http://radar.oreilly.com/2009/03/continuous-deployment-5-eas.html) so much that it releases to production multiple times a day. It uses DVCS like **[Git](http://git-scm.com)** and agile story tracker like **[PIVOTAL TRACKER](http://www.pivotaltracker.com)**. It has adopted TDD & **[Continious Integration](http://en.wikipedia.org/wiki/Continuous_integration)** as way of life. Every engineer [commits to master all the time](http://martinfowler.com/bliki/FeatureBranch.html#PromiscuousIntegrationVsContinuousIntegration).
 </sub>

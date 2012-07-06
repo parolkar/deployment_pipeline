@@ -2,20 +2,35 @@
 
 require File.dirname(__FILE__) + '/../lib/pipeline'
 
+
 class PipelineCmd < Thor
   class_option :config, :type => :string,
                :desc => "A ruby file that defines relevant constants & configs. accepts ENV $PIPELINE_CONFIG",
                :default => ENV["PIPELINE_CONFIG"] || "#{ENV['HOME']}/.pipeline_config"
-  def initialize(args=[], options={}, config={})
-    super
-    load(self.options[:config])
-  end
 
   desc "setup", "Setup Deployment Pipeline Tool"
   method_option :force, :type => :boolean, :default => false, :desc => "Force operation"
   def setup
-    #stub
-    puts "Setup complete!"
+    say("Let's setup Deployment Pipeline")
+    p_token = ask("Pivotal Tracker Token:")
+    project_ids=  ask("Pivotal Tracker Project Ids (comma separated):")
+
+    unless File.exists?(options[:config])
+      FileUtils.cp "#{File.dirname(__FILE__) + '/../sample.pipeline_config'}", options[:config]
+    end
+
+    pivotal_config_sample =<<MSG
+PIVOTAL_TRACKER_TOKEN = "your_cryptic_pivotal_token"
+PIVOTAL_TRACKER_PROJECT_IDS = ["proj_id1","proj_id2"]
+MSG
+    config_file = File.open(options[:config],"r")
+    config_string = config_file.read
+    fp =File.open(options[:config],"w")
+    fp.write(config_string.gsub(pivotal_config_sample,"PIVOTAL_TRACKER_TOKEN = \"#{p_token}\" \nPIVOTAL_TRACKER_PROJECT_IDS = #{project_ids.split(',').inspect}"))
+    fp.close
+
+    puts "Setup complete! (Configuration updated in #{options[:config]})"
+    puts "Thanks for choosing Deployment Pipeline"
   end
 
 
@@ -25,7 +40,7 @@ class PipelineCmd < Thor
   method_option :commit_range, :type => :string, :desc => "Range of commits, eg.\"last_release_tag1..HEAD\""
   method_option :html, :type => :boolean, :default => false, :desc => "pretty html output"
   def status
-
+    load(self.options[:config])
     c_range = options[:commit_range]
     c_range = c_range.split("..")
 
@@ -75,6 +90,7 @@ class PipelineCmd < Thor
   method_option :branch, :default => "master", :desc => "Git branch to consider"
   method_option :last_release_commit, :type => :string, :desc => "Commit id (SHA) of previous release "
   def suitable_release
+    load(self.options[:config])
     last_release_commit = options[:last_release_commit]
     code_repo = CodeRepository.new(options[:repository_path],last_release_commit)
     tracker = PivotalTracker.new
@@ -123,6 +139,7 @@ class PipelineCmd < Thor
   method_option :target_release_commit, :type => :string, :desc => "Commit id (SHA) of intended release "
   method_option :html, :type => :boolean, :default => false, :desc =>  "pretty html output"
   def release_plan
+    load(self.options[:config])
     last_release_commit = options[:last_release_commit]
     target_release_commit = options[:target_release_commit]
     code_repo = CodeRepository.new(options[:repository_path],last_release_commit)
@@ -195,8 +212,5 @@ class PipelineCmd < Thor
   end
 
 end
-
-
-
 
 PipelineCmd.start
