@@ -5,7 +5,7 @@ Gem::Specification.new do |gem|
   gem.description = "Deployment Pipeline makes Continuous Deployment super easy."
   gem.homepage = "https://github.com/parolkar/deployment_pipeline"
   gem.summary = gem.description
-  gem.version = "0.0.0"
+  gem.version = "0.0.1"
   gem.authors = ["Abhishek Parolkar"]
   gem.email = "abhishek@parolkar.com"
   gem.has_rdoc = false
@@ -18,5 +18,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency "rdiscount"
   gem.add_dependency "progressbar","0.11.0"
   gem.add_dependency "hpricot"
+  gem.add_dependency "active_support"
 end
 

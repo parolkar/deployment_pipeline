@@ -1,6 +1,6 @@
 source :rubygems
 gem "thor","0.14.6"
-gem "pg"
+#gem "pg"
 gem "active_support"
 gem "i18n"
 gem "chronic"

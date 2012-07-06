@@ -1,5 +1,3 @@
-
-
 Deployment Pipeline  (Let's make Continuous Deployment painless)
 -------------------
 
@@ -144,7 +142,7 @@ Fetching...:   100% |============================================| Time:   0:00:
 > Stories being released are:
 >
   * (chore) [Reduce memory foot print](http://www.pivotaltracker.com/story/show/3)  requested by **Big B** owned by Tony
-  * (feature) [Users can forsee their future](http://www.pivotaltracker.com/story/show/4)  requested by requested by **Rajnikanth** owned by Tom Cruise
+  * (feature) [Users can foresee their future](http://www.pivotaltracker.com/story/show/4)  requested by requested by **Rajnikanth** owned by Tom Cruise
 
 
 > Commits that needs to be cherry-picked as they are part of above stories:
@@ -166,9 +164,16 @@ Fetching...:   100% |============================================| Time:   0:00:
 
 </code></pre>
 
+####Inspiration
+
+ * [Continuous Delivery](http://en.wikipedia.org/wiki/Continuous_delivery)
+ * [Git Story](https://github.com/visibletrap/git_story) Project from [visibletrap](https://github.com/visibletrap) & [acroca](https://github.com/acroca)
+ * [Jenkin's](http://jenkins-ci.org/) Build Pipeline Project
+
 
 <sub>\[**1**\]: Team which is motivated for [release-often philosophy](http://radar.oreilly.com/2009/03/continuous-deployment-5-eas.html) so much that it releases to production multiple times a day. It uses DVCS like **[Git](http://git-scm.com)** and agile story tracker like **[PIVOTAL TRACKER](http://www.pivotaltracker.com)**. It has adopted TDD & **[Continious Integration](http://en.wikipedia.org/wiki/Continuous_integration)** as way of life. Every engineer [commits to master all the time](http://martinfowler.com/bliki/FeatureBranch.html#PromiscuousIntegrationVsContinuousIntegration).
 </sub>
+
 ---------------------------------------------------------------
 <sub>
 #####Copyright (c) 2012 Abhishek Parolkar [abhishek[at]parolkar[dot]com)

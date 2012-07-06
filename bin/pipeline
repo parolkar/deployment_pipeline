@@ -37,7 +37,7 @@ MSG
   desc "status", "lists all stories with their status"
   method_option :repository_path, :default => "#{Dir.pwd}", :desc => "Git repository path"
   method_option :branch, :default => "master", :desc => "Git branch to consider"
-  method_option :commit_range, :type => :string, :desc => "Range of commits, eg.\"last_release_tag1..HEAD\""
+  method_option :commit_range, :type => :string, :desc => "Range of commits, eg.\"from_commit_sha..to_commit_sha\""
   method_option :html, :type => :boolean, :default => false, :desc => "pretty html output"
   def status
     load(self.options[:config])
