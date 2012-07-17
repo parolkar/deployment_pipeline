@@ -17,7 +17,7 @@ a feature is released.  Deployment Pipeline is here to help you manage these rel
 ### Practical Scenario:
  1. You have 5 Product Managers who request feature/bug stories and prioritize them anytime during the day.
  2. You have 10 engineers working on 5 stories and commits to  Master branch (or Trunk) several times a day.
- 3. Build is green only 60% of time during the day.
+ 3. Build is green only 70% of time during the day.
  4. By the time build is green there are commits to 4 finished & intermediate commits to an 1 un-finished story.
  5. QA delivers the stories(4) which has been finished and 3 are accepted and 1 is rejected.
  6. Among 3 accepted stories Marketing Team takes a call to hold 1 story even though its ready.
@@ -50,6 +50,16 @@ a feature is released.  Deployment Pipeline is here to help you manage these rel
   3. Inform stake-holders about what features are being released and locked down release marker
   4. Cherry-pick related commits from above the marker to release branch
   5. Build the release branch and wait for it to be green
+  6. Deploy release branch to production
+  7. Automate this entire process
+
+
+#### Chasing a commit for release:
+  1. You make a choice for commit in mainline, all the stories below that will be deployed. (but the stories are not yet accepted or in progress)
+  2. Inform everybody in your dev/prod mgmt team that following stories should be accepted before we release
+  3. Branch out to new "Release" Branch
+  4. In case, few stories are rejected or new bugs are discovered ask everyone to fix it on release branch and also backport (merge) those changes to mainline.
+  5. Once all stories are accepted, build the release branch and wait for it to be green
   6. Deploy release branch to production
   7. Automate this entire process
 
@@ -164,6 +174,11 @@ Fetching...:   100% |============================================| Time:   0:00:
 
 </code></pre>
 
+
+####Gotchas:
+ * [BUG] Segmentation fault (ruby 1.9.3p194 (2012-04-20 revision 35410) [x86_64-darwin11.4.0]): If you see random segmentation faults, install the rugged gem provided in the extra folder.
+
+
 ####Inspiration
 
  * [Continuous Delivery](http://en.wikipedia.org/wiki/Continuous_delivery)
@@ -175,10 +190,10 @@ Fetching...:   100% |============================================| Time:   0:00:
 </sub>
 
 ---------------------------------------------------------------
-<sub>
-#####Copyright (c) 2012 Abhishek Parolkar [abhishek[at]parolkar[dot]com)
+<font size='1'>
+Copyright (c) 2012 Abhishek Parolkar [abhishek[at]parolkar[dot]com)
 
-######Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-######The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-######THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-</sub>
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+</font>
