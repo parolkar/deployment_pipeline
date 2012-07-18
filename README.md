@@ -185,6 +185,7 @@ Fetching...:   100% |============================================| Time:   0:00:
  * [Git Story](https://github.com/visibletrap/git_story) Project from [visibletrap](https://github.com/visibletrap) & [acroca](https://github.com/acroca)
  * [Jenkin's](http://jenkins-ci.org/) Build Pipeline Project
 
+####Thanks to the awesome team @ [Viki](http://viki.com) for letting me contribute to this project
 
 <sub>\[**1**\]: Team which is motivated for [release-often philosophy](http://radar.oreilly.com/2009/03/continuous-deployment-5-eas.html) so much that it releases to production multiple times a day. It uses DVCS like **[Git](http://git-scm.com)** and agile story tracker like **[PIVOTAL TRACKER](http://www.pivotaltracker.com)**. It has adopted TDD & **[Continious Integration](http://en.wikipedia.org/wiki/Continuous_integration)** as way of life. Every engineer [commits to master all the time](http://martinfowler.com/bliki/FeatureBranch.html#PromiscuousIntegrationVsContinuousIntegration).
 </sub>
